@@ -4,33 +4,12 @@ from selenium.webdriver.common.by import By
 import time
 import json
 
-vertices = [
-    [1, "31.93658, 34.78899", 0],
-    [2, "31.92992, 34.781", 3],
-    [3, "31.94135, 34.80062", 4],
-    [4, "31.93891, 34.81156", 6],
-    [5, "31.94809, 34.80152", 6],
-    [6, "31.95056, 34.78422", 6],
-    [7, "31.92449, 34.7977", 4],
-    [8, "31.92587, 34.81443", 8],
-    [9, "31.93522, 34.78764", 1],
-    [10, "31.94487, 34.81996", 8],
-    [11, "31.93995, 34.82773", 8],
-    [12, "31.95211, 34.7846", 6],
-    [13, "31.95903, 34.80198", 9],
-    [14, "31.93609, 34.77833", 3],
-    [15, "31.95175, 34.82562", 8],
-    [16, "31.9543, 34.81442", 7]
-]
+input_json = None
+with open("input.json", "r") as f:
+    input_json = json.load(f)
+vertices = input_json["vertices"]
 
-start_vertex = 1
-
-profits = [
-
-]
-
-map_vertex = list(range(1, len(vertices) + 1))
-
+start_vertex = input_json["start_vertex"]
 edges = []
 
 driver = webdriver.Firefox()
@@ -40,7 +19,9 @@ elem = driver.find_element(By.XPATH, "/html/body/div[3]/div[9]/div[3]/div[1]/div
 elem.click()
 
 for i in range(len(vertices)):
-    for j in range(i+1,len(vertices)):
+    for j in range(len(vertices)):
+        if i == j:
+            break
         elem = driver.find_element(By.XPATH, "/html/body/div[3]/div[9]/div[3]/div[1]/div[2]/div/div[3]/div[1]/div[1]/div[2]/div[1]/div/input")
         elem.clear()
         elem.send_keys(vertices[i][1])
@@ -65,9 +46,9 @@ for i in range(len(vertices)):
 
                 edges.append((i, j, distance))
                 print(f"from {vertices[i][0]} to {vertices[j][0]} is {distance} meters")
-                print(f"{len(edges)}/{int(len(vertices)*(len(vertices)-1)/2)}")
+                print(f"{len(edges)}/{int((len(vertices)*(len(vertices)-1)/2))}")
                 break
-            except:     
+            except Exception:
                 if k >= 10:
                     input("refresh and complete captcha")
                 k += delay
